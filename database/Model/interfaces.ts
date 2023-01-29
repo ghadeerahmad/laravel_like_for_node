@@ -23,11 +23,11 @@ export interface ModelRelation {
     name: string,
     foreignKey: string,
     target_table: string,
-    target_model: Model
+    target_model: Model,
 }
 
 export interface ModelRelationEagerLoad {
     model: Model,
     ids: number[],
-
+    target_column?: string
 }

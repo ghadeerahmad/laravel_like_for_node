@@ -3,7 +3,11 @@ class User extends Model {
 
     protected hidden: string[] = ['password']
 }
-class Type extends Model { }
+class Type extends Model {
+    stores() {
+        this.hasMany(Store)
+    }
+}
 class Store extends Model {
     user() {
         this.belongsTo(User)
@@ -13,7 +17,7 @@ class Store extends Model {
     }
 }
 async function test() {
-    const model = await Store.query().with('user', 'type')
+    const model = await Type.query().with('stores')
         .get()
     console.log(model)
 }

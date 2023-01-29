@@ -1,4 +1,5 @@
-import { ModelWhere, ModelWhereIn } from "./interfaces"
+import { ModelRelation, ModelRelationEagerLoad, ModelWhere, ModelWhereIn } from "./interfaces"
+import Model from "./Model"
 
 /** build select clause */
 export function buildSelect(selects: string[], table: string) {
@@ -48,4 +49,80 @@ export function buildWhereIn(whereIns: ModelWhereIn[]) {
         })
     }
     return command
+}
+
+/** get belongs to result */
+export async function getBelongsTo(models: Model[], belongsTos: ModelRelation[]) {
+    const list: ModelRelationEagerLoad[] = []
+    belongsTos.map((rel) => {
+        const ids: number[] = []
+        models.map((item) => {
+            if (item[`${rel.foreignKey}`]) {
+                const check = ids.find((id => id === item[`${rel.foreignKey}`]))
+                if (!check)
+                    ids.push(item[`${rel.foreignKey}`])
+            }
+        })
+        if (ids.length > 0) {
+
+            list.push({ model: rel.target_model, ids: ids })
+        }
+    })
+    const result: any[] = []
+    for (const item of list) {
+        const res = await item.model.whereIn('id', item.ids).get()
+
+        result.push(res)
+    }
+    belongsTos.map((rel) => {
+        for (const model of models) {
+            result.map((item) => {
+                item.map((i: any) => {
+                    if (i.id === model[`${rel.foreignKey}`]) {
+                        model[`${rel.name}`] = i
+                    }
+                })
+            })
+        }
+    })
+    return models
+}
+
+/** get hasMany relations */
+export async function getHasMany(models: Model[], hasManies: ModelRelation[]) {
+    const list: ModelRelationEagerLoad[] = []
+    hasManies.map((rel) => {
+        const ids: number[] = []
+        models.map((item) => {
+            const check = ids.find((id => id === item.id))
+            if (!check)
+                ids.push(item.id)
+        })
+        if (ids.length > 0) {
+
+            list.push({ model: rel.target_model, ids: ids, target_column: rel.foreignKey })
+        }
+    })
+    const result: any[] = []
+    for (const item of list) {
+        if (item.target_column) {
+            const res = await item.model.whereIn(item.target_column, item.ids).get()
+
+            result.push(res)
+        }
+    }
+    hasManies.map((rel) => {
+        for (const model of models) {
+            const vars: any[] = []
+            result.map((item) => {
+                item.map((i: any) => {
+                    if (i[`${rel.foreignKey}`] === model.id) {
+                        vars.push(i)
+                    }
+                })
+            })
+            model[`${rel.name}`] = vars
+        }
+    })
+    return models
 }

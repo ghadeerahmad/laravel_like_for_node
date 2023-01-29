@@ -1,6 +1,6 @@
 "strict mode"
 import { DB } from "../db"
-import { buildSelect, buildWhere, buildWhereIn } from "./helpers"
+import { buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
 import { ModelAttribute, ModelInsertItem, ModelRelation, ModelRelationEagerLoad, ModelWhere, ModelWhereIn } from "./interfaces"
 
 export default class Model {
@@ -27,6 +27,8 @@ export default class Model {
     protected withs: string[] = []
     /** 1 to 1 relations */
     protected belongsTos: ModelRelation[] = []
+    /** 1 to many relations */
+    protected hasManies: ModelRelation[] = []
     /** factory method */
     public static query() {
         return new this
@@ -93,6 +95,36 @@ export default class Model {
         }
         this.belongsTos.push(relation)
     }
+    /** 1 to many relationship */
+    protected hasMany<A extends Model>(c: new () => A, foreignKey?: string, relationName?: string) {
+        let foreign = foreignKey
+        let name = relationName ?? ''
+        let names = this.constructor.name.split(/(?=[A-Z])/)
+        let relNames = c.name.split(/(?=[A-Z])/)
+        const model = new c()
+        if (!foreign) {
+            foreign = ''
+            names.map((item, index) => {
+                foreign += item.toLowerCase()
+                if (index !== names.length - 1) foreign += '_'
+            })
+            foreign += '_id'
+        }
+        if (name === '') {
+            relNames.map((item, index) => {
+                name += item.toLowerCase()
+                if (index !== relNames.length - 1) name += '_'
+            })
+        }
+
+        const relation: ModelRelation = {
+            name: `${name}s`,
+            foreignKey: foreign,
+            target_model: model,
+            target_table: model.table
+        }
+        this.hasManies.push(relation)
+    }
     /** push new where condition to wheres list */
     public where(key: string, value: any, operator: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE' = '=') {
         this.wheres.push({
@@ -114,46 +146,7 @@ export default class Model {
             }
         })
     }
-    /** get belongs to result */
-    protected async getBelongsTo(models: this[]) {
-        const list: ModelRelationEagerLoad[] = []
-        this.belongsTos.map((rel) => {
-            const ids: number[] = []
-            models.map((item) => {
-                if (item[`${rel.foreignKey}`]) {
-                    const check = ids.find((id => id === item[`${rel.foreignKey}`]))
-                    if (!check)
-                        ids.push(item[`${rel.foreignKey}`])
-                }
-            })
-            if (ids.length > 0) {
 
-                list.push({ model: rel.target_model, ids: ids })
-            }
-        })
-        const result: any[] = []
-        for (const item of list) {
-            const res = await item.model.whereIn('id', item.ids).get()
-            res.map((i) => {
-                item.model.hidden.map((j) => {
-                    delete i[`${j}`]
-                })
-            })
-            result.push(res)
-        }
-        this.belongsTos.map((rel) => {
-            for (const model of models) {
-                result.map((item) => {
-                    item.map((i: any) => {
-                        if (i.id === model[`${rel.foreignKey}`]) {
-                            model[`${rel.name}`] = i
-                        }
-                    })
-                })
-            }
-        })
-        return models
-    }
     /** push new where in pairs to where in list */
     public whereIn(key: string, value: any[]) {
         if (!Array.isArray(value))
@@ -175,7 +168,8 @@ export default class Model {
                 list.push(model.toJSON())
             }
         })
-        list = await this.getBelongsTo(list)
+        list = await getBelongsTo(list, this.belongsTos)
+        list = await getHasMany(list, this.hasManies)
         return list
     }
     /** get single object from database */
