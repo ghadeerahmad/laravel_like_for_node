@@ -32,6 +32,17 @@ class DB {
             })
         });
     }
+    public static async createTable(statement: string) {
+        return new Promise<number | undefined>((resolve, reject) => {
+
+            db.query(statement, function (err, result, fields) {
+                if (err) throw err;
+                const res = <ResultSetHeader>result
+
+                return resolve(res.insertId);
+            })
+        });
+    }
 }
 
 export { DB }
