@@ -1,4 +1,4 @@
-# laravel_like_for_node
+# library for node js to deal with mysql 
 a library similar to laravel functionalties written in node js
 
 # Features

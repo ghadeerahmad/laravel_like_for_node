@@ -1,12 +1,12 @@
 {
-  "name": "larascript",
+  "name": "@ghadeerahmad/larascript",
   "version": "1.0.0",
   "description": "open source framwork",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Ghadeer Ahmad",
+  "author": "Ghadeer Ahmad <ghadeer.95.ah@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@types/dotenv": "^8.2.0",
@@ -19,5 +19,16 @@
   "devDependencies": {
     "@types/jest": "^29.4.0",
     "jest": "^29.4.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ghadeerahmad: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@github.com/ghadeerahmad/laravel_like_for_node.git"
+  },
+  "keywords": [
+    "larascript"
+  ],
+  "bugs": {
+    "url": "https://github.com/ghadeerahmad/laravel_like_for_node/issues"
+  },
+  "homepage": "https://github.com/ghadeerahmad/laravel_like_for_node#readme"
 }
