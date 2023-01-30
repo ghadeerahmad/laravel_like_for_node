@@ -45,7 +45,9 @@ class Migration {
                 if (index !== list.length - 1)
                     comm += ',';
             });
-            comm += `,${this.getForeignIds()}`;
+            const foreign = this.getForeignIds();
+            if (foreign !== '')
+                comm += `,${foreign}`;
             comm += ');';
             yield db_1.DB.createTable(comm);
         });

@@ -37,7 +37,9 @@ export default class Migration {
             if (value.unique) comm += ' UNIQUE'
             if (index !== list.length - 1) comm += ','
         })
-        comm += `,${this.getForeignIds()}`
+        const foreign = this.getForeignIds()
+        if (foreign !== '')
+            comm += `,${foreign}`
         comm += ');'
         await DB.createTable(comm);
     }
