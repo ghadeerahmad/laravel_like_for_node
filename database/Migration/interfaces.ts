@@ -1,4 +1,5 @@
 import { ColumnType } from "./enums";
+import Migration from "./Migration";
 
 
 export interface MigrationAttribute {
@@ -9,5 +10,12 @@ export interface MigrationAttribute {
     unique?: boolean,
     primary?: boolean,
     autoIncrement?: boolean,
-    unsigned?: boolean
+    unsigned?: boolean,
+    foreign?: Foreign,
+    default?: any
+}
+export interface Foreign {
+    refrences: Migration,
+    refrence_key: string,
+    onDelete?: "NULL" | "CASCADE"
 }

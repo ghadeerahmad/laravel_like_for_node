@@ -12,6 +12,7 @@ export default class Migration {
 
     /** migration constructor */
     constructor(table: string, attributes: Attribute) {
+        attributes.id = { type: ColumnType.bigint, primary: true, autoIncrement: true }
         this.attributes = attributes;
         this.table = table;
     }
@@ -21,14 +22,48 @@ export default class Migration {
         const list = Object.entries(this.attributes)
         list.map(([key, value], index) => {
             comm += `${key} ${this.getType(value)}${this.getLength(value)}`
-            if (value.primary) comm += ' UNSIGNED PRIMARY KEY '
+            if (value.unsigned) comm += ' UNSIGNED'
+            if (value.primary) {
+                if (!value.unique) comm += ' UNSIGNED'
+                comm += ' PRIMARY KEY'
+            }
+            if (value.foreign) {
+                if (!value.unsigned && value.type === ColumnType.bigint) {
+                    comm += ' UNSIGNED'
+                }
+            }
             if (value.nullable === false) comm += ' NOT NULL '
             if (value.autoIncrement) comm += ' AUTO_INCREMENT '
             if (value.unique) comm += ' UNIQUE'
             if (index !== list.length - 1) comm += ','
         })
+        comm += `,${this.getForeignIds()}`
         comm += ');'
         await DB.createTable(comm);
+    }
+    protected getForeignIds() {
+        const list = Object.entries(this.attributes)
+        let foreigns = ''
+        list.map(([key, value], index) => {
+            if (value.foreign) {
+                const keyName = `${this.table}_${key}_foreign`
+                foreigns += `CONSTRAINT ${keyName} FOREIGN KEY `
+                foreigns += `(${key}) REFERENCES ${value.foreign.refrences.table}(${value.foreign.refrence_key}) `
+                if (value.foreign.onDelete) {
+                    foreigns += `ON DELETE`
+                    switch (value.foreign.onDelete) {
+                        case 'CASCADE':
+                            foreigns += ` CASCADE`
+                            break;
+                        case 'NULL':
+                            foreigns += ' SET NULL'
+                            break;
+                    }
+                }
+                if (index !== list.length - 1) foreigns += ','
+            }
+        })
+        return foreigns
     }
     protected getType(attr: MigrationAttribute) {
         switch (attr.type) {
