@@ -1,4 +1,5 @@
-import { ColumnType } from "./enums"
+import { ColumnType } from "./enums";
+
 
 export interface MigrationAttribute {
     type: ColumnType,
@@ -7,5 +8,6 @@ export interface MigrationAttribute {
     nullable?: boolean,
     unique?: boolean,
     primary?: boolean,
-    autoIncrement?: boolean
+    autoIncrement?: boolean,
+    unsigned?: boolean
 }

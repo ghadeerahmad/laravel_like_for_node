@@ -1,8 +1,8 @@
+"use strict";
 // import { ColumnType } from "./database/Migration/enums";
 // import Migration from "./database/Migration/Migration";
 // import Model from "./database/Model/Model";
 // class User extends Model {
-
 //     protected hidden: string[] = ['password']
 // }
 // const users = new Migration('users', {
