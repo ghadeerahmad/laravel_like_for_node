@@ -29,7 +29,7 @@ class Store extends Model {
     }
 }
 async function test() {
-    await captains.run()
-    // console.log(model)
+    const users = await User.query().orderBy('id', 'ASC').get()
+    console.log(users)
 }
 test()

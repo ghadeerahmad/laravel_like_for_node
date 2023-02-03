@@ -56,6 +56,9 @@ class Model {
         const wheres = (0, helpers_1.buildWhere)(this.wheres);
         const whereIn = (0, helpers_1.buildWhereIn)(this.whereIns);
         this.command = `${select} ${wheres} ${whereIn}`;
+        if (this.order_by) {
+            this.command += ` ORDER BY ${this.order_by.orderBy} ${this.order_by.sort}`;
+        }
     }
     /** build an object of type model from database object */
     buildObject(source) {
@@ -128,6 +131,11 @@ class Model {
             target_table: model.table
         };
         this.hasManies.push(relation);
+    }
+    /** order by function */
+    orderBy(order_by, sort = "ASC") {
+        this.order_by = { orderBy: order_by, sort: sort };
+        return this;
     }
     /** push new where condition to wheres list */
     where(key, value, operator = '=') {

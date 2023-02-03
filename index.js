@@ -46,8 +46,8 @@ class Store extends Model_1.default {
 }
 function test() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield captains.run();
-        // console.log(model)
+        const users = yield User.query().orderBy('id', 'DESC').get();
+        console.log(users);
     });
 }
 test();

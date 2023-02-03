@@ -3,6 +3,10 @@ import { DB } from "../db"
 import { buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
 import { ModelAttribute, ModelInsertItem, ModelRelation, ModelRelationEagerLoad, ModelWhere, ModelWhereIn } from "./interfaces"
 
+interface OrderBy {
+    orderBy: string,
+    sort: "ASC" | "DESC"
+}
 export default class Model {
 
     /** attributes variables */
@@ -20,6 +24,9 @@ export default class Model {
     protected whereIns: ModelWhereIn[] = []
     /** list of fields should be selected from database */
     protected selects: string[] = []
+
+    /** order by */
+    protected order_by?: OrderBy;
     /** the command which will be built befor the query */
     protected command: string = ''
 
@@ -51,6 +58,9 @@ export default class Model {
         const wheres = buildWhere(this.wheres)
         const whereIn = buildWhereIn(this.whereIns)
         this.command = `${select} ${wheres} ${whereIn}`
+        if (this.order_by) {
+            this.command += ` ORDER BY ${this.order_by.orderBy} ${this.order_by.sort}`
+        }
     }
 
 
@@ -124,6 +134,11 @@ export default class Model {
             target_table: model.table
         }
         this.hasManies.push(relation)
+    }
+    /** order by function */
+    public orderBy(order_by: string, sort: "ASC" | "DESC" = "ASC") {
+        this.order_by = { orderBy: order_by, sort: sort }
+        return this
     }
     /** push new where condition to wheres list */
     public where(key: string, value: any, operator: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE' = '=') {
