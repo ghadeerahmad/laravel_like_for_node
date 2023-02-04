@@ -74,4 +74,5 @@ password:'somepassword'
 // this function return true or false
 const resutl = await User.query().where('id',1).update({name:'new name'})
 ```
+you must call query() function when you perform any query to database
 # more details will be inserted as soom as possible
