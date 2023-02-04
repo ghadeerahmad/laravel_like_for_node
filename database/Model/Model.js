@@ -49,6 +49,23 @@ class Model {
             });
         });
     }
+    /** build update command */
+    buildUpdateCommand(data) {
+        let comm = `UPDATE ${this.table} SET `;
+        const wehres = (0, helpers_1.buildWhere)(this.wheres);
+        const whereIn = (0, helpers_1.buildWhereIn)(this.whereIns);
+        const list = Object.entries(data);
+        list.map(([key, value], index) => {
+            let val = `'${value}'`;
+            if (Number.isInteger(value) || value === null) {
+                val = value;
+            }
+            comm += `${key}=${val}`;
+            if (index !== list.length - 1)
+                comm += ',';
+        });
+        this.command = `${comm} ${wehres} ${whereIn}`;
+    }
     /** build the command */
     buildCommand() {
         this.prepareRelations();
@@ -58,6 +75,9 @@ class Model {
         this.command = `${select} ${wheres} ${whereIn}`;
         if (this.order_by) {
             this.command += ` ORDER BY ${this.order_by.orderBy} ${this.order_by.sort}`;
+        }
+        if (this.lmt) {
+            this.command += ` LIMIT ${this.lmt}`;
         }
     }
     /** build an object of type model from database object */
@@ -131,6 +151,11 @@ class Model {
             target_table: model.table
         };
         this.hasManies.push(relation);
+    }
+    /** limit function */
+    limit(number) {
+        this.lmt = number;
+        return this;
     }
     /** order by function */
     orderBy(order_by, sort = "ASC") {
@@ -229,6 +254,14 @@ class Model {
                 return created;
             }
             return null;
+        });
+    }
+    /** update */
+    update(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.buildUpdateCommand(data);
+            const result = yield db_1.DB.update(this.command);
+            return result ? true : false;
         });
     }
     /** convert model to json data */

@@ -24,7 +24,8 @@ export default class Model {
     protected whereIns: ModelWhereIn[] = []
     /** list of fields should be selected from database */
     protected selects: string[] = []
-
+    /** define limit */
+    protected lmt: number | undefined
     /** order by */
     protected order_by?: OrderBy;
     /** the command which will be built befor the query */
@@ -51,6 +52,22 @@ export default class Model {
             })
         })
     }
+    /** build update command */
+    protected buildUpdateCommand(data: ModelInsertItem) {
+        let comm = `UPDATE ${this.table} SET `
+        const wehres = buildWhere(this.wheres)
+        const whereIn = buildWhereIn(this.whereIns)
+        const list = Object.entries(data)
+        list.map(([key, value], index) => {
+            let val = `'${value}'`
+            if (Number.isInteger(value) || value === null) {
+                val = value
+            }
+            comm += `${key}=${val}`
+            if (index !== list.length - 1) comm += ','
+        })
+        this.command = `${comm} ${wehres} ${whereIn}`
+    }
     /** build the command */
     protected buildCommand() {
         this.prepareRelations()
@@ -60,6 +77,9 @@ export default class Model {
         this.command = `${select} ${wheres} ${whereIn}`
         if (this.order_by) {
             this.command += ` ORDER BY ${this.order_by.orderBy} ${this.order_by.sort}`
+        }
+        if (this.lmt) {
+            this.command += ` LIMIT ${this.lmt}`
         }
     }
 
@@ -134,6 +154,11 @@ export default class Model {
             target_table: model.table
         }
         this.hasManies.push(relation)
+    }
+    /** limit function */
+    public limit(number: number) {
+        this.lmt = number
+        return this
     }
     /** order by function */
     public orderBy(order_by: string, sort: "ASC" | "DESC" = "ASC") {
@@ -227,6 +252,12 @@ export default class Model {
             return created
         }
         return null
+    }
+    /** update */
+    public async update(data: ModelInsertItem) {
+        this.buildUpdateCommand(data)
+        const result = await DB.update(this.command)
+        return result ? true : false
     }
     /** convert model to json data */
     public toJSON() {
