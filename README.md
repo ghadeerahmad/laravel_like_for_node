@@ -46,7 +46,7 @@ every model points to a table in the database.
 to create new model:
 ```
 export class User extends Model{
-    constructo(){
+    constructor(){
         super()
         this.table = 'users'
     }
