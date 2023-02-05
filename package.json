@@ -25,7 +25,12 @@
     "url": "git+https://ghadeerahmad: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@github.com/ghadeerahmad/laravel_like_for_node.git"
   },
   "keywords": [
-    "larascript"
+    "larascript",
+    "node",
+    "nodejs",
+    "typescript",
+    "mysql",
+    "express"
   ],
   "bugs": {
     "url": "https://github.com/ghadeerahmad/laravel_like_for_node/issues"
