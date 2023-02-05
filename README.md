@@ -18,6 +18,9 @@ const users = new Migration('users', {
     userName: { type: ColumnType.string, unique: true },
     password: { type: ColumnType.string }
 })
+
+// run migration
+await users.run()
 ```
 the migration constructor takes 2 arguments: the first is table name and the second is columns and thier properties
 - type: this is the column type
@@ -43,7 +46,7 @@ supported types:
 
 ### Model Usage
 every model points to a table in the database.
-to create new model:
+#### to create new model:
 ```
 export class User extends Model{
     constructor(){
@@ -75,4 +78,23 @@ password:'somepassword'
 const result = await User.query().where('id',1).update({name:'new name'})
 ```
 you must call query() function when you perform any query to database
+#### eager load
+- if you want to fetch data from a relationship you need to define relation in the model class,i.e:
+```
+export class User extends Model{
+    addresses(){
+        this.hadMany(Address)
+    }
+}
+export class Address extends Model{
+    user(){
+        this.belongsTo(User)
+    }
+}
+```
+here is example of hasMay and belongsTo relationships and how you can define them.
+- to call data from relationship,i.e:
+```
+const users = await User.query().with('addresses').get()
+```
 # more details will be inserted as soom as possible
