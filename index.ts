@@ -29,7 +29,18 @@ class Store extends Model {
     }
 }
 async function test() {
-    const users = await User.query().limit(1).get()
-    console.log(users)
+    User.query().insert([
+        {
+            name: 'ttt',
+            username: 'ttt',
+            password: 'ttt'
+        },
+        {
+            name: 'ttt',
+            username: 'ttt3',
+            password: 'ttt'
+        },
+    ])
+    // console.log(users)
 }
 test()

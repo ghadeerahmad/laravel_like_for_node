@@ -82,8 +82,62 @@ export default class Model {
             this.command += ` LIMIT ${this.lmt}`
         }
     }
+    /** build upsert commane */
+    protected buildUpsert(fields: string[], values: ModelInsertItem[], checkFields: string[]) {
+        this.command = `INSERT INTO ${this.table} (`
+        fields.map((item, index) => {
+            this.command += item
+            if (index !== fields.length - 1) this.command += ','
+        })
+        this.command += ') VALUES'
+        values.map((item, index) => {
+            this.command += '('
+            const itemList = Object.entries(item)
+            itemList.map(([key, value], index) => {
+                if (Number.isInteger(value) || value === null)
+                    this.command += value
+                else this.command += `'${value}'`
+                if (index !== itemList.length - 1) this.command += ','
+            })
+            this.command += ')'
+            if (index !== values.length - 1) this.command += ','
+        })
+        this.command += ' ON DUPLICATE KEY UPDATE '
+        fields.map((col, i) => {
+            const check = checkFields.find((item => item === col))
+            if (!check) {
+                this.command += `${col} = VALUES(${col})`
 
-
+                if (i !== fields.length - 1) this.command += ','
+            }
+        })
+    }
+    /** build insert command */
+    protected buildInsertCommand(data: ModelInsertItem[]) {
+        if (data.length === 0) return
+        const fields: string[] = []
+        Object.entries(data[0]).map(([key, value]) => {
+            fields.push(key)
+        })
+        this.command = `INSERT INTO ${this.table} (`
+        fields.map((item, index) => {
+            this.command += item
+            if (index !== fields.length - 1) this.command += ','
+        })
+        this.command += ') VALUES'
+        data.map((item, index) => {
+            this.command += '('
+            const itemList = Object.entries(item)
+            itemList.map(([key, value], index) => {
+                if (Number.isInteger(value) || value === null)
+                    this.command += value
+                else this.command += `'${value}'`
+                if (index !== itemList.length - 1) this.command += ','
+            })
+            this.command += ')'
+            if (index !== data.length - 1) this.command += ','
+        })
+    }
 
     /** build an object of type model from database object */
     protected buildObject(source: any) {
@@ -269,9 +323,29 @@ export default class Model {
         })
         return data
     }
+    /** get eager load relations */
     public with(...name: string[]) {
         this.withs = [...name]
         return this
     }
+    /** upsert function */
+    public async upsert(data: ModelInsertItem[], checkKeys: string[]) {
+        if (data.length === 0) return
+        const fields: string[] = []
+        Object.entries(data[0]).map(([key, value]) => {
+            fields.push(key)
+        })
+        this.buildUpsert(fields, data, checkKeys)
+        const result = await DB.update(this.command)
+        return result
+    }
+    /** insert many function */
+    public async insert(data: ModelInsertItem[]) {
+        if (data.length === 0) return
 
+        this.buildInsertCommand(data)
+        const result = await DB.update(this.command)
+        return result
+
+    }
 }

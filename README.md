@@ -8,6 +8,8 @@ a library similar to laravel functionalties written in node js
 - create new record with auto timestamps
 - eagerload for 1 to 1 relationship
 - eagerload for 1 to many relationship
+- insert many
+- upsert function
 
 # Usage
 ### to create new migration file
