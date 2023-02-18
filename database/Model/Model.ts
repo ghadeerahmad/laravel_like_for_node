@@ -1,7 +1,7 @@
 "strict mode"
-import { DB } from "../db"
+import DB from "../db"
 import { buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
-import { ModelAttribute, ModelInsertItem, ModelRelation, ModelRelationEagerLoad, ModelWhere, ModelWhereIn } from "./interfaces"
+import { ModelAttribute, ModelInsertItem, ModelRelation, ModelWhere, ModelWhereIn } from "./interfaces"
 
 interface OrderBy {
     orderBy: string,

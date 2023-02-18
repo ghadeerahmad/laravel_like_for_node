@@ -1,4 +1,4 @@
-import { DB } from "../db";
+import DB from "../db";
 import { ColumnType } from "./enums";
 import { MigrationAttribute } from "./interfaces";
 

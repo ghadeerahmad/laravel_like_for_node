@@ -56,4 +56,4 @@ class DB {
     }
 }
 
-export { DB }
+export default DB 
