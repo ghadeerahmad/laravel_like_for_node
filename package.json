@@ -2,7 +2,8 @@
   "name": "@ghadeerahmad/larascript",
   "version": "1.3.0",
   "description": "open source framwork",
-  "main": "index.ts",
+  "main": "./build/index.js",
+  "types": "./index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
