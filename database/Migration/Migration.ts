@@ -21,7 +21,17 @@ export default class Migration {
         let comm = `CREATE TABLE IF NOT EXISTS ${this.table} (`
         const list = Object.entries(this.attributes)
         list.map(([key, value], index) => {
-            comm += `${key} ${this.getType(value)}${this.getLength(value)}`
+            const type = this.getType(value)
+            comm += `${key} ${type}${this.getLength(value)}`
+            if (value.choices && type === 'ENUM') {
+                comm += '('
+                const length = value.choices.length;
+                value.choices.map((item, i) => {
+                    comm += item
+                    if (i != length - 1) { comm += ',' }
+                })
+                comm += ')'
+            }
             if (value.unsigned) comm += ' UNSIGNED'
             if (value.primary) {
                 if (!value.unique) comm += ' UNSIGNED'
