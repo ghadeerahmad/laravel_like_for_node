@@ -27,7 +27,7 @@ export default class Migration {
                 comm += '('
                 const length = value.choices.length;
                 value.choices.map((item, i) => {
-                    comm += item
+                    comm += `'${item}'`
                     if (i != length - 1) { comm += ',' }
                 })
                 comm += ')'
