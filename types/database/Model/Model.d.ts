@@ -60,11 +60,11 @@ export default class Model {
     /** get list of rows from database */
     get(): Promise<any[]>;
     /** get single object from database */
-    first(): Promise<this | null>;
+    first(): Promise<any>;
     /** find by id */
-    find(id: number): Promise<this | null>;
+    find(id: number): Promise<any>;
     /** create new record in the database */
-    create(data: ModelInsertItem): Promise<this | null>;
+    create(data: ModelInsertItem): Promise<any>;
     /** update */
     update(data: ModelInsertItem): Promise<boolean>;
     /** convert model to json data */

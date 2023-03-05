@@ -267,13 +267,9 @@ export default class Model {
         return list
     }
     /** get single object from database */
-    public async first(): Promise<this | null> {
-        this.buildCommand()
-        this.command += ' LIMIT 1'
-        const result = await DB.fetch(this.command)
-        if (result.length === 0) return null
-        const model = this.buildObject(result[0])
-        return model
+    public async first() {
+        const model = await this.limit(1).get()
+        return model[0]
     }
     /** find by id */
     public async find(id: number) {

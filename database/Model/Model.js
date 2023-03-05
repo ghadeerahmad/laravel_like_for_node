@@ -280,13 +280,8 @@ class Model {
     /** get single object from database */
     first() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.buildCommand();
-            this.command += ' LIMIT 1';
-            const result = yield db_1.default.fetch(this.command);
-            if (result.length === 0)
-                return null;
-            const model = this.buildObject(result[0]);
-            return model;
+            const model = yield this.limit(1).get();
+            return model[0];
         });
     }
     /** find by id */
