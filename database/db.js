@@ -48,7 +48,17 @@ class DB {
             });
         });
     }
-    static update(statement) {
+    // public static async update(statement: string): Promise<boolean> {
+    //     return new Promise<boolean>((resolve, reject) => {
+    //         db.query(statement, function (err, result, fields) {
+    //             if (err) throw err;
+    //             const res = <ResultSetHeader>result
+    //             if (err) return resolve(false)
+    //             return resolve(true);
+    //         })
+    //     });
+    // }
+    static execute(statement) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 db.query(statement, function (err, result, fields) {

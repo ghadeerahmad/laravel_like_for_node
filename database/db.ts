@@ -32,7 +32,18 @@ class DB {
             })
         });
     }
-    public static async update(statement: string): Promise<boolean> {
+    // public static async update(statement: string): Promise<boolean> {
+    //     return new Promise<boolean>((resolve, reject) => {
+
+    //         db.query(statement, function (err, result, fields) {
+    //             if (err) throw err;
+    //             const res = <ResultSetHeader>result
+    //             if (err) return resolve(false)
+    //             return resolve(true);
+    //         })
+    //     });
+    // }
+    public static async execute(statement: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
 
             db.query(statement, function (err, result, fields) {
@@ -43,6 +54,7 @@ class DB {
             })
         });
     }
+
     public static async createTable(statement: string) {
         return new Promise<number | undefined>((resolve, reject) => {
 

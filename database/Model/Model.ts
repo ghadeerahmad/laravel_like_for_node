@@ -138,7 +138,13 @@ export default class Model {
             if (index !== data.length - 1) this.command += ','
         })
     }
+    /** build delete command */
+    protected buildDeleteCommand() {
+        const wheres = buildWhere(this.wheres)
+        const whereIn = buildWhereIn(this.whereIns)
+        this.command = `DELETE FROM ${this.table} ${wheres} ${whereIn}`
 
+    }
     /** build an object of type model from database object */
     protected buildObject(source: any) {
         const attrs: ModelAttribute[] = [];
@@ -306,7 +312,7 @@ export default class Model {
     /** update */
     public async update(data: ModelInsertItem) {
         this.buildUpdateCommand(data)
-        const result = await DB.update(this.command)
+        const result = await DB.execute(this.command)
         return result ? true : false
     }
     /** convert model to json data */
@@ -332,7 +338,7 @@ export default class Model {
             fields.push(key)
         })
         this.buildUpsert(fields, data, checkKeys)
-        const result = await DB.update(this.command)
+        const result = await DB.execute(this.command)
         return result
     }
     /** insert many function */
@@ -340,9 +346,17 @@ export default class Model {
         if (data.length === 0) return
 
         this.buildInsertCommand(data)
-        const result = await DB.update(this.command)
+        const result = await DB.execute(this.command)
         return result
 
+    }
+    select(...args: string[]) {
+        this.selects = args
+        return this
+    }
+    async delete() {
+        const result = await DB.execute(this.command)
+        return result;
     }
 }
 

@@ -36,7 +36,7 @@ function buildWhere(wheres) {
         else
             command += `${item.key} ${item.operator} '${item.value}'`;
         if (index !== wheres.length - 1)
-            command += ',';
+            command += ' and ';
     });
     return command;
 }

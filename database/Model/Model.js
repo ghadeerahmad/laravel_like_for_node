@@ -148,6 +148,12 @@ class Model {
                 this.command += ',';
         });
     }
+    /** build delete command */
+    buildDeleteCommand() {
+        const wheres = (0, helpers_1.buildWhere)(this.wheres);
+        const whereIn = (0, helpers_1.buildWhereIn)(this.whereIns);
+        this.command = `DELETE FROM ${this.table} ${wheres} ${whereIn}`;
+    }
     /** build an object of type model from database object */
     buildObject(source) {
         const attrs = [];
@@ -323,7 +329,7 @@ class Model {
     update(data) {
         return __awaiter(this, void 0, void 0, function* () {
             this.buildUpdateCommand(data);
-            const result = yield db_1.default.update(this.command);
+            const result = yield db_1.default.execute(this.command);
             return result ? true : false;
         });
     }
@@ -354,7 +360,7 @@ class Model {
                 fields.push(key);
             });
             this.buildUpsert(fields, data, checkKeys);
-            const result = yield db_1.default.update(this.command);
+            const result = yield db_1.default.execute(this.command);
             return result;
         });
     }
@@ -364,7 +370,17 @@ class Model {
             if (data.length === 0)
                 return;
             this.buildInsertCommand(data);
-            const result = yield db_1.default.update(this.command);
+            const result = yield db_1.default.execute(this.command);
+            return result;
+        });
+    }
+    select(...args) {
+        this.selects = args;
+        return this;
+    }
+    delete() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield db_1.default.execute(this.command);
             return result;
         });
     }

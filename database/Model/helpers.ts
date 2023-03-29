@@ -24,7 +24,7 @@ export function buildWhere(wheres: ModelWhere[]) {
             command += `${item.key} ${item.operator} ${item.value}`
         else
             command += `${item.key} ${item.operator} '${item.value}'`
-        if (index !== wheres.length - 1) command += ','
+        if (index !== wheres.length - 1) command += ' and '
     })
     return command
 }

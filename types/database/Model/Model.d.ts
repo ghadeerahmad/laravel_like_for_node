@@ -41,6 +41,8 @@ export default class Model {
     protected buildUpsert(fields: string[], values: ModelInsertItem[], checkFields: string[]): void;
     /** build insert command */
     protected buildInsertCommand(data: ModelInsertItem[]): void;
+    /** build delete command */
+    protected buildDeleteCommand(): void;
     /** build an object of type model from database object */
     protected buildObject(source: any): any;
     /** 1 to 1 relationship */
@@ -75,5 +77,7 @@ export default class Model {
     upsert(data: ModelInsertItem[], checkKeys: string[]): Promise<boolean | undefined>;
     /** insert many function */
     insert(data: ModelInsertItem[]): Promise<boolean | undefined>;
+    select(...args: string[]): this;
+    delete(): Promise<boolean>;
 }
 export {};
