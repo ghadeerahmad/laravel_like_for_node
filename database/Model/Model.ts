@@ -1,7 +1,7 @@
 "strict mode"
 import DB from "../db"
-import { buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
-import { ModelAttribute, ModelInsertItem, ModelRelation, ModelWhere, ModelWhereIn } from "./interfaces"
+import { buildJoin, buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
+import { ModelAttribute, ModelInsertItem, ModelJoinItem, ModelRelation, ModelWhere, ModelWhereIn } from "./interfaces"
 
 interface OrderBy {
     orderBy: string,
@@ -22,6 +22,7 @@ export default class Model {
     /** list of wheres and where in*/
     protected wheres: ModelWhere[] = []
     protected whereIns: ModelWhereIn[] = []
+    protected joins: ModelJoinItem[] = []
     /** list of fields should be selected from database */
     protected selects: string[] = []
     /** define limit */
@@ -72,9 +73,10 @@ export default class Model {
     protected buildCommand() {
         this.prepareRelations()
         const select = buildSelect(this.selects, this.table)
+        const joins = buildJoin(this.joins)
         const wheres = buildWhere(this.wheres)
         const whereIn = buildWhereIn(this.whereIns)
-        this.command = `${select} ${wheres} ${whereIn}`
+        this.command = `${select} ${joins} ${wheres} ${whereIn}`
         if (this.order_by) {
             this.command += ` ORDER BY ${this.order_by.orderBy} ${this.order_by.sort}`
         }
@@ -352,6 +354,15 @@ export default class Model {
     }
     select(...args: string[]) {
         this.selects = args
+        return this
+    }
+    join(table: String, left: String, right: String, operator: '=' | '!=' | '>' | '<' = '=') {
+        this.joins.push({
+            table: table,
+            left: left,
+            right: right,
+            operator: operator
+        })
         return this
     }
     async delete() {

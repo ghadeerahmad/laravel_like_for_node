@@ -1,4 +1,4 @@
-import { ModelAttribute, ModelInsertItem, ModelRelation, ModelWhere, ModelWhereIn } from "./interfaces";
+import { ModelAttribute, ModelInsertItem, ModelJoinItem, ModelRelation, ModelWhere, ModelWhereIn } from "./interfaces";
 interface OrderBy {
     orderBy: string;
     sort: "ASC" | "DESC";
@@ -15,6 +15,7 @@ export default class Model {
     /** list of wheres and where in*/
     protected wheres: ModelWhere[];
     protected whereIns: ModelWhereIn[];
+    protected joins: ModelJoinItem[];
     /** list of fields should be selected from database */
     protected selects: string[];
     /** define limit */
@@ -78,6 +79,7 @@ export default class Model {
     /** insert many function */
     insert(data: ModelInsertItem[]): Promise<boolean | undefined>;
     select(...args: string[]): this;
+    join(table: String, left: String, right: String, operator?: '=' | '!=' | '>' | '<'): this;
     delete(): Promise<boolean>;
 }
 export {};

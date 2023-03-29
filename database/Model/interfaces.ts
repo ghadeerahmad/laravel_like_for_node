@@ -31,3 +31,10 @@ export interface ModelRelationEagerLoad {
     ids: number[],
     target_column?: string
 }
+
+export interface ModelJoinItem {
+    table: String,
+    left: String,
+    right: String,
+    operator: '=' | '!=' | '>' | '<'
+}

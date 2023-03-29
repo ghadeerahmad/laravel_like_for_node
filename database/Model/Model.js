@@ -26,6 +26,7 @@ class Model {
         /** list of wheres and where in*/
         this.wheres = [];
         this.whereIns = [];
+        this.joins = [];
         /** list of fields should be selected from database */
         this.selects = [];
         /** the command which will be built befor the query */
@@ -73,9 +74,10 @@ class Model {
     buildCommand() {
         this.prepareRelations();
         const select = (0, helpers_1.buildSelect)(this.selects, this.table);
+        const joins = (0, helpers_1.buildJoin)(this.joins);
         const wheres = (0, helpers_1.buildWhere)(this.wheres);
         const whereIn = (0, helpers_1.buildWhereIn)(this.whereIns);
-        this.command = `${select} ${wheres} ${whereIn}`;
+        this.command = `${select} ${joins} ${wheres} ${whereIn}`;
         if (this.order_by) {
             this.command += ` ORDER BY ${this.order_by.orderBy} ${this.order_by.sort}`;
         }
@@ -378,8 +380,18 @@ class Model {
         this.selects = args;
         return this;
     }
+    join(table, left, right, operator = '=') {
+        this.joins.push({
+            table: table,
+            left: left,
+            right: right,
+            operator: operator
+        });
+        return this;
+    }
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.buildDeleteCommand();
             const result = yield db_1.default.execute(this.command);
             return result;
         });

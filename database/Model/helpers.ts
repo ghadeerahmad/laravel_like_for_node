@@ -1,4 +1,4 @@
-import { ModelRelation, ModelRelationEagerLoad, ModelWhere, ModelWhereIn } from "./interfaces"
+import { ModelJoinItem, ModelRelation, ModelRelationEagerLoad, ModelWhere, ModelWhereIn } from "./interfaces"
 import Model from "./Model"
 
 /** build select clause */
@@ -28,7 +28,14 @@ export function buildWhere(wheres: ModelWhere[]) {
     })
     return command
 }
-
+export function buildJoin(join: ModelJoinItem[]) {
+    let command = ''
+    join.map((item, index) => {
+        command += `JOIN ${item.table} ON ${item.left} ${item.operator} ${item.right}`
+        if (index != join.length - 1) command += ','
+    })
+    return command
+}
 /** build whereIn statement */
 export function buildWhereIn(whereIns: ModelWhereIn[]) {
     let command = ''
