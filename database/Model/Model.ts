@@ -355,6 +355,7 @@ export default class Model {
         return this
     }
     async delete() {
+        this.buildDeleteCommand()
         const result = await DB.execute(this.command)
         return result;
     }
