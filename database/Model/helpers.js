@@ -31,7 +31,7 @@ function buildWhere(wheres) {
     if (wheres.length > 0)
         command += 'WHERE ';
     wheres.map((item, index) => {
-        if (Number.isInteger(item.value))
+        if (Number.isInteger(item.value) || item.value === null)
             command += `${item.key} ${item.operator} ${item.value}`;
         else
             command += `${item.key} ${item.operator} '${item.value}'`;

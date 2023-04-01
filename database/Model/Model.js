@@ -296,6 +296,7 @@ class Model {
     find(id) {
         return __awaiter(this, void 0, void 0, function* () {
             this.where('id', id);
+            this.buildCommand();
             const result = yield this.first();
             return result;
         });

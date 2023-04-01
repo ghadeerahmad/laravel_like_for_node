@@ -282,7 +282,7 @@ export default class Model {
     /** find by id */
     public async find(id: number) {
         this.where('id', id)
-
+        this.buildCommand()
         const result = await this.first()
         return result
     }
