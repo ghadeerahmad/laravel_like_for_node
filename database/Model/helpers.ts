@@ -31,7 +31,7 @@ export function buildWhere(wheres: ModelWhere[]) {
 export function buildJoin(join: ModelJoinItem[]) {
     let command = ''
     join.map((item, index) => {
-        command += `JOIN ${item.table} ON ${item.left} ${item.operator} ${item.right}`
+        command += ` JOIN ${item.table} ON ${item.left} ${item.operator} ${item.right}`
         // if (index != join.length - 1) command += ','
     })
     return command
