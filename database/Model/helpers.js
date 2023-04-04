@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHasMany = exports.getBelongsTo = exports.buildWhereIn = exports.buildJoin = exports.buildWhere = exports.buildSelect = void 0;
+exports.getHasMany = exports.getBelongsTo = exports.buildWhereIn = exports.buildJoin = exports.buildOrWhere = exports.buildWhere = exports.buildSelect = void 0;
 /** build select clause */
 function buildSelect(selects, table) {
     let command = 'SELECT ';
@@ -41,6 +41,21 @@ function buildWhere(wheres) {
     return command;
 }
 exports.buildWhere = buildWhere;
+function buildOrWhere(wheres) {
+    let command = '';
+    if (wheres.length > 0)
+        command += 'Or WHERE ';
+    wheres.map((item, index) => {
+        if (Number.isInteger(item.value) || item.value === null)
+            command += `${item.key} ${item.operator} ${item.value}`;
+        else
+            command += `${item.key} ${item.operator} '${item.value}'`;
+        if (index !== wheres.length - 1)
+            command += ' and ';
+    });
+    return command;
+}
+exports.buildOrWhere = buildOrWhere;
 function buildJoin(join) {
     let command = '';
     join.map((item, index) => {

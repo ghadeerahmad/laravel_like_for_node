@@ -28,6 +28,18 @@ export function buildWhere(wheres: ModelWhere[]) {
     })
     return command
 }
+export function buildOrWhere(wheres: ModelWhere[]) {
+    let command = ''
+    if (wheres.length > 0) command += 'Or WHERE '
+    wheres.map((item, index) => {
+        if (Number.isInteger(item.value) || item.value === null)
+            command += `${item.key} ${item.operator} ${item.value}`
+        else
+            command += `${item.key} ${item.operator} '${item.value}'`
+        if (index !== wheres.length - 1) command += ' and '
+    })
+    return command
+}
 export function buildJoin(join: ModelJoinItem[]) {
     let command = ''
     join.map((item, index) => {

@@ -14,6 +14,7 @@ export default class Model {
     protected hidden: string[];
     /** list of wheres and where in*/
     protected wheres: ModelWhere[];
+    protected orWheres: ModelWhere[];
     protected whereIns: ModelWhereIn[];
     protected joins: ModelJoinItem[];
     /** list of fields should be selected from database */
@@ -56,6 +57,7 @@ export default class Model {
     orderBy(order_by: string, sort?: "ASC" | "DESC"): this;
     /** push new where condition to wheres list */
     where(key: string, value: any, operator?: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE'): this;
+    orWhere(key: string, value: any, operator?: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE'): this;
     /** prepare relationships */
     protected prepareRelations(): void;
     /** push new where in pairs to where in list */

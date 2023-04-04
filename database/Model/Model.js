@@ -25,6 +25,7 @@ class Model {
         this.hidden = [];
         /** list of wheres and where in*/
         this.wheres = [];
+        this.orWheres = [];
         this.whereIns = [];
         this.joins = [];
         /** list of fields should be selected from database */
@@ -57,6 +58,7 @@ class Model {
     buildUpdateCommand(data) {
         let comm = `UPDATE ${this.table} SET `;
         const wehres = (0, helpers_1.buildWhere)(this.wheres);
+        const orWheres = (0, helpers_1.buildOrWhere)(this.orWheres);
         const whereIn = (0, helpers_1.buildWhereIn)(this.whereIns);
         const list = Object.entries(data);
         list.map(([key, value], index) => {
@@ -68,7 +70,7 @@ class Model {
             if (index !== list.length - 1)
                 comm += ',';
         });
-        this.command = `${comm} ${wehres} ${whereIn}`;
+        this.command = `${comm} ${wehres} ${whereIn} ${orWheres}`;
     }
     /** build the command */
     buildCommand() {
@@ -241,6 +243,14 @@ class Model {
     /** push new where condition to wheres list */
     where(key, value, operator = '=') {
         this.wheres.push({
+            key: key,
+            value: value,
+            operator: operator
+        });
+        return this;
+    }
+    orWhere(key, value, operator = '=') {
+        this.orWheres.push({
             key: key,
             value: value,
             operator: operator

@@ -1,6 +1,6 @@
 "strict mode"
 import DB from "../db"
-import { buildJoin, buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
+import { buildJoin, buildOrWhere, buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
 import { ModelAttribute, ModelInsertItem, ModelJoinItem, ModelRelation, ModelWhere, ModelWhereIn } from "./interfaces"
 
 interface OrderBy {
@@ -21,6 +21,7 @@ export default class Model {
 
     /** list of wheres and where in*/
     protected wheres: ModelWhere[] = []
+    protected orWheres: ModelWhere[] = []
     protected whereIns: ModelWhereIn[] = []
     protected joins: ModelJoinItem[] = []
     /** list of fields should be selected from database */
@@ -57,6 +58,7 @@ export default class Model {
     protected buildUpdateCommand(data: ModelInsertItem) {
         let comm = `UPDATE ${this.table} SET `
         const wehres = buildWhere(this.wheres)
+        const orWheres = buildOrWhere(this.orWheres)
         const whereIn = buildWhereIn(this.whereIns)
         const list = Object.entries(data)
         list.map(([key, value], index) => {
@@ -67,7 +69,7 @@ export default class Model {
             comm += `${key}=${val}`
             if (index !== list.length - 1) comm += ','
         })
-        this.command = `${comm} ${wehres} ${whereIn}`
+        this.command = `${comm} ${wehres} ${whereIn} ${orWheres}`
     }
     /** build the command */
     protected buildCommand() {
@@ -236,6 +238,15 @@ export default class Model {
         })
         return this
     }
+    public orWhere(key: string, value: any, operator: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE' = '=') {
+        this.orWheres.push({
+            key: key,
+            value: value,
+            operator: operator
+        })
+        return this
+    }
+
     /** prepare relationships */
     protected prepareRelations() {
 
