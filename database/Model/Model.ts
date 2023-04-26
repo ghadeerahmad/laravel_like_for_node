@@ -230,7 +230,7 @@ export default class Model {
         return this
     }
     /** push new where condition to wheres list */
-    public where(key: string, value: any, operator: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE' = '=') {
+    public where(key: string, value: any, operator: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE' | '>' | '<' | '>=' | '<=' = '=') {
         this.wheres.push({
             key: key,
             value: value,

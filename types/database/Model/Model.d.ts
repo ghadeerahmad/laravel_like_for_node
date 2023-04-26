@@ -56,7 +56,7 @@ export default class Model {
     /** order by function */
     orderBy(order_by: string, sort?: "ASC" | "DESC"): this;
     /** push new where condition to wheres list */
-    where(key: string, value: any, operator?: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE'): this;
+    where(key: string, value: any, operator?: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE' | '>' | '<' | '>=' | '<='): this;
     orWhere(key: string, value: any, operator?: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE'): this;
     /** prepare relationships */
     protected prepareRelations(): void;

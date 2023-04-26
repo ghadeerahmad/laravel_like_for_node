@@ -6,7 +6,7 @@ export interface ModelAttribute {
 export interface ModelWhere {
     key: string;
     value: string | number | null;
-    operator: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE';
+    operator: '=' | '!=' | 'IS' | 'IS NOT' | 'LIKE' | '>' | '<' | '>=' | '<=';
 }
 export interface ModelWhereIn {
     key: string;
