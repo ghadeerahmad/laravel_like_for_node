@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mysql2_1 = require("mysql2");
 const db_1 = __importDefault(require("../db"));
 const helpers_1 = require("./helpers");
 class Model {
@@ -62,11 +63,7 @@ class Model {
         const whereIn = (0, helpers_1.buildWhereIn)(this.whereIns);
         const list = Object.entries(data);
         list.map(([key, value], index) => {
-            let val = `'${value}'`;
-            if (Number.isInteger(value) || value === null) {
-                val = value;
-            }
-            comm += `${key}=${val}`;
+            comm += `${key}=${(0, mysql2_1.escape)(value)}`;
             if (index !== list.length - 1)
                 comm += ',';
         });
@@ -100,10 +97,7 @@ class Model {
             this.command += '(';
             const itemList = Object.entries(item);
             itemList.map(([key, value], index) => {
-                if (Number.isInteger(value) || value === null)
-                    this.command += value;
-                else
-                    this.command += `'${value}'`;
+                this.command += (0, mysql2_1.escape)(value);
                 if (index !== itemList.length - 1)
                     this.command += ',';
             });
@@ -140,10 +134,7 @@ class Model {
             this.command += '(';
             const itemList = Object.entries(item);
             itemList.map(([key, value], index) => {
-                if (Number.isInteger(value) || value === null)
-                    this.command += value;
-                else
-                    this.command += `'${value}'`;
+                this.command += (0, mysql2_1.escape)(value);
                 if (index !== itemList.length - 1)
                     this.command += ',';
             });
@@ -319,11 +310,9 @@ class Model {
             let values = '';
             const vars = Object.entries(data);
             vars.map(([key, value], index) => {
+                const val = (0, mysql2_1.escape)(value);
                 keys += key;
-                if (Number.isInteger(value) || value === null)
-                    values += value;
-                else
-                    values += `'${value}'`;
+                values += (0, mysql2_1.escape)(value);
                 if (index !== vars.length - 1) {
                     keys += ',';
                     values += ',';

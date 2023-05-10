@@ -1,6 +1,6 @@
 {
   "name": "@ghadeerahmad/larascript",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "open source framwork",
   "main": "index.js",
   "types": "./types/index.d.ts",

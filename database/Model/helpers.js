@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHasMany = exports.getBelongsTo = exports.buildWhereIn = exports.buildJoin = exports.buildOrWhere = exports.buildWhere = exports.buildSelect = void 0;
+const mysql2_1 = require("mysql2");
 /** build select clause */
 function buildSelect(selects, table) {
     let command = 'SELECT ';
@@ -31,10 +32,7 @@ function buildWhere(wheres) {
     if (wheres.length > 0)
         command += 'WHERE ';
     wheres.map((item, index) => {
-        if (Number.isInteger(item.value) || item.value === null)
-            command += `${item.key} ${item.operator} ${item.value}`;
-        else
-            command += `${item.key} ${item.operator} '${item.value}'`;
+        command += `${item.key} ${item.operator} ${(0, mysql2_1.escape)(item.value)}`;
         if (index !== wheres.length - 1)
             command += ' and ';
     });
@@ -46,10 +44,13 @@ function buildOrWhere(wheres) {
     if (wheres.length > 0)
         command += 'Or WHERE ';
     wheres.map((item, index) => {
-        if (Number.isInteger(item.value) || item.value === null)
-            command += `${item.key} ${item.operator} ${item.value}`;
-        else
-            command += `${item.key} ${item.operator} '${item.value}'`;
+        command += `${item.key} ${item.operator} ${(0, mysql2_1.escape)(item.value)}`;
+        // if (Number.isInteger(item.value) || item.value === null)
+        //     command += `${item.key} ${item.operator} ${item.value}`
+        // else {
+        //     const val = escape(item.value)
+        //     command += `${item.key} ${item.operator} ${val}`
+        // }
         if (index !== wheres.length - 1)
             command += ' and ';
     });
@@ -76,7 +77,7 @@ function buildWhereIn(whereIns) {
         whereIns.map((item, index) => {
             command += `${item.key} IN (`;
             item.value.map((val, index) => {
-                command += val;
+                command += (0, mysql2_1.escape)(val);
                 if (index !== item.value.length - 1)
                     command += ',';
             });

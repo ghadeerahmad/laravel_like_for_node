@@ -1,4 +1,5 @@
 "strict mode"
+import { escape } from "mysql2"
 import DB from "../db"
 import { buildJoin, buildOrWhere, buildSelect, buildWhere, buildWhereIn, getBelongsTo, getHasMany } from "./helpers"
 import { ModelAttribute, ModelInsertItem, ModelJoinItem, ModelRelation, ModelWhere, ModelWhereIn } from "./interfaces"
@@ -62,11 +63,7 @@ export default class Model {
         const whereIn = buildWhereIn(this.whereIns)
         const list = Object.entries(data)
         list.map(([key, value], index) => {
-            let val = `'${value}'`
-            if (Number.isInteger(value) || value === null) {
-                val = value
-            }
-            comm += `${key}=${val}`
+            comm += `${key}=${escape(value)}`
             if (index !== list.length - 1) comm += ','
         })
         this.command = `${comm} ${wehres} ${whereIn} ${orWheres}`
@@ -98,9 +95,7 @@ export default class Model {
             this.command += '('
             const itemList = Object.entries(item)
             itemList.map(([key, value], index) => {
-                if (Number.isInteger(value) || value === null)
-                    this.command += value
-                else this.command += `'${value}'`
+                this.command += escape(value)
                 if (index !== itemList.length - 1) this.command += ','
             })
             this.command += ')'
@@ -133,9 +128,7 @@ export default class Model {
             this.command += '('
             const itemList = Object.entries(item)
             itemList.map(([key, value], index) => {
-                if (Number.isInteger(value) || value === null)
-                    this.command += value
-                else this.command += `'${value}'`
+                this.command += escape(value)
                 if (index !== itemList.length - 1) this.command += ','
             })
             this.command += ')'
@@ -305,10 +298,10 @@ export default class Model {
         const vars = Object.entries(data)
 
         vars.map(([key, value], index) => {
+            const val = escape(value)
             keys += key
-            if (Number.isInteger(value) || value === null)
-                values += value
-            else values += `'${value}'`
+            values += escape(value)
+
             if (index !== vars.length - 1) {
                 keys += ','
                 values += ','
